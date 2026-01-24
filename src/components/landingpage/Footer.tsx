@@ -263,15 +263,13 @@ function Footer({ data }: FooterProps) {
                     } else if (link.name.toLowerCase().includes('terms')) {
                       window.history.pushState({}, '', '/terms');
                       window.dispatchEvent(new PopStateEvent('popstate'));
-                    } else {
-                      window.open(link.url, '_blank');
                     }
                   };
                   
                   return (
                     <a
                       key={idx}
-                      href={link.url}
+                      href="#"
                       onClick={handleClick}
                       className="text-theme-neutral hover:text-theme-primary transition-all duration-200 relative group cursor-pointer"
                     >
