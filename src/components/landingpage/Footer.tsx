@@ -47,6 +47,18 @@ function Footer({ data }: FooterProps) {
   const resourceLinks = footerConfig.sections?.resources?.links || [];
   const legalLinks = footerConfig.sections?.legal?.links || [];
 
+  // Add click handler to all link sections
+  const handleLinkClick = (e: React.MouseEvent, link: any) => {
+    const linkName = link.name?.toLowerCase() || '';
+    if (linkName.includes('privacy') || linkName.includes('policy')) {
+      e.preventDefault();
+      window.location.href = '/privacy';
+    } else if (linkName.includes('terms') || linkName.includes('condition')) {
+      e.preventDefault();
+      window.location.href = '/terms';
+    }
+  };
+
   const companyInfo = {
     description: footerConfig.company_info?.description || "",
     logo: footerConfig.company_info?.logo,
@@ -133,6 +145,7 @@ function Footer({ data }: FooterProps) {
                     <li key={idx}>
                       <a
                         href={link.url || "#"}
+                        onClick={(e) => handleLinkClick(e, link)}
                         className="text-xs sm:text-sm text-theme-neutral hover:text-theme-primary transition-all duration-200 flex items-center justify-start gap-2 group"
                       >
                         <span className="w-0 h-0.5 group-hover:w-4 transition-all duration-200 bg-theme-primary" />
@@ -156,6 +169,7 @@ function Footer({ data }: FooterProps) {
                   <li key={idx}>
                     <a
                       href={link.url || "#"}
+                      onClick={(e) => handleLinkClick(e, link)}
                       className="text-xs sm:text-sm text-theme-neutral hover:text-theme-primary transition-all duration-200 flex items-center justify-start gap-2 group"
                     >
                       <span className="w-0 h-0.5 group-hover:w-4 transition-all duration-200 bg-theme-primary" />
@@ -180,6 +194,7 @@ function Footer({ data }: FooterProps) {
                     <li key={idx}>
                       <a
                         href={link.url || "#"}
+                        onClick={(e) => handleLinkClick(e, link)}
                         className="text-xs sm:text-sm text-theme-neutral hover:text-theme-primary transition-all duration-200 flex items-center justify-start gap-2 group"
                       >
                         <span className="w-0 h-0.5 group-hover:w-4 transition-all duration-200 bg-theme-primary" />
@@ -254,29 +269,17 @@ function Footer({ data }: FooterProps) {
             {/* Legal Links */}
             {legalLinks.length > 0 && (
               <div className="flex gap-4 sm:gap-6 text-xs sm:text-sm flex-wrap justify-center md:justify-end">
-                {legalLinks.map((link: any, idx: number) => {
-                  const handleClick = (e: React.MouseEvent) => {
-                    e.preventDefault();
-                    const linkName = link.name.toLowerCase();
-                    if (linkName.includes('privacy') || linkName.includes('policy')) {
-                      window.location.href = '/privacy';
-                    } else if (linkName.includes('terms') || linkName.includes('condition')) {
-                      window.location.href = '/terms';
-                    }
-                  };
-                  
-                  return (
-                    <a
-                      key={idx}
-                      href="#"
-                      onClick={handleClick}
-                      className="text-theme-neutral hover:text-theme-primary transition-all duration-200 relative group cursor-pointer"
-                    >
-                      {link.name}
-                      <span className="absolute -bottom-1 left-0 w-0 h-0.5 group-hover:w-full transition-all duration-200 bg-theme-primary" />
-                    </a>
-                  );
-                })}
+                {legalLinks.map((link: any, idx: number) => (
+                  <a
+                    key={idx}
+                    href="#"
+                    onClick={(e) => handleLinkClick(e, link)}
+                    className="text-theme-neutral hover:text-theme-primary transition-all duration-200 relative group cursor-pointer"
+                  >
+                    {link.name}
+                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 group-hover:w-full transition-all duration-200 bg-theme-primary" />
+                  </a>
+                ))}}
               </div>
             )}
           </div>

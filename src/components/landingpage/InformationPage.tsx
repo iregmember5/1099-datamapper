@@ -1,4 +1,50 @@
+import { useState, useEffect } from "react";
+
+interface InformationPageData {
+  id: number;
+  title: string;
+  slug: string;
+  subtitle?: string;
+  description: string;
+  last_updated: string;
+}
+
+const isDevelopment = import.meta.env.DEV;
+const frontendUrl = isDevelopment
+  ? "http://localhost:5173"
+  : "https://1099datamapper.com";
+const baseApiUrl = isDevelopment
+  ? "/blogs/api/v2"
+  : "https://esign-admin.signmary.com/blogs/api/v2";
+
 export function InformationPage() {
+  const [data, setData] = useState<InformationPageData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(`${baseApiUrl}/information-pages/`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Frontend-Url": frontendUrl,
+      },
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        setData(result.items?.[0] || null);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
+
+  if (loading)
+    return (
+      <div style={{ padding: "2rem", textAlign: "center" }}>Loading...</div>
+    );
+  if (!data)
+    return (
+      <div style={{ padding: "2rem", textAlign: "center" }}>Page not found</div>
+    );
   return (
     <div style={{ fontFamily: "system-ui, -apple-system, sans-serif", margin: 0 }}>
       <div
@@ -38,9 +84,7 @@ export function InformationPage() {
             maxWidth: "800px",
           }}
         >
-          Information
-          <br />
-          Page
+          {data.title}
         </h1>
       </div>
 
@@ -52,27 +96,62 @@ export function InformationPage() {
           backgroundColor: "#ffffff",
         }}
       >
-        <h2
-          style={{
-            fontSize: "1.5rem",
-            color: "#1a1a1a",
-            marginBottom: "2rem",
-            fontWeight: "600",
-          }}
-        >
-          Welcome to the Demo Website Information Page
-        </h2>
+        {data.subtitle && (
+          <h2
+            style={{
+              fontSize: "1.5rem",
+              color: "#1a1a1a",
+              marginBottom: "2rem",
+              fontWeight: "600",
+            }}
+          >
+            {data.subtitle}
+          </h2>
+        )}
         <div
           style={{
             color: "#374151",
             fontSize: "1.05rem",
             lineHeight: "1.8",
           }}
-        >
-          <p>This is the information page for the demo website. Here you can find details about our platform and services.</p>
-          <p>Our platform offers comprehensive solutions for your business needs including document management, e-signature capabilities, and much more.</p>
-        </div>
+          dangerouslySetInnerHTML={{ __html: data.description }}
+        />
       </div>
+
+      <style>{`
+        body { margin: 0; background: #ffffff; }
+        h3 { 
+          font-size: 1.5rem; 
+          color: #1f2937; 
+          margin-top: 2.5rem; 
+          margin-bottom: 1rem;
+          font-weight: 600;
+        }
+        p { 
+          margin-bottom: 1.25rem; 
+        }
+        ul { 
+          margin: 1rem 0 1.5rem 1.5rem;
+          list-style-type: disc;
+        }
+        li { 
+          margin-bottom: 0.5rem;
+          padding-left: 0.5rem;
+        }
+        a { 
+          color: #2563eb; 
+          text-decoration: none;
+          border-bottom: 1px solid transparent;
+          transition: border-color 0.2s;
+        }
+        a:hover { 
+          border-bottom-color: #2563eb;
+        }
+        b, strong { 
+          color: #1f2937;
+          font-weight: 600;
+        }
+      `}</style>
     </div>
   );
 }
