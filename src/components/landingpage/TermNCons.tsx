@@ -53,7 +53,7 @@ export function TermsAndConditions() {
       <div
         style={{
           backgroundImage:
-            "linear-gradient(rgba(30, 41, 38, 0.7), rgba(30, 41, 38, 0.7)), url(/wp-1099.png)",
+            "linear-gradient(rgba(30, 41, 38, 0.7), rgba(30, 41, 38, 0.7)), url(/datamapper.png)",
           backgroundSize: "cover",
           backgroundPosition: "center",
           minHeight: "500px",
