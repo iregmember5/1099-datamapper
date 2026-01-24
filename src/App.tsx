@@ -22,6 +22,16 @@ const AffiliateDashboard = lazy(
   () => import("./components/landingpage/AffiliateDashboard"),
 );
 const TeamPage = lazy(() => import("./components/teams/TeamPage"));
+const PrivacyPolicy = lazy(() =>
+  import("./components/landingpage/Privacy").then((m) => ({
+    default: m.PrivacyPolicy,
+  })),
+);
+const TermsAndConditions = lazy(() =>
+  import("./components/landingpage/TermNCons").then((m) => ({
+    default: m.TermsAndConditions,
+  })),
+);
 
 const PageLoader = () => (
   <div
@@ -59,7 +69,9 @@ function AppContent() {
       | "salespage"
       | "gallery"
       | "affiliate"
-      | "team";
+      | "team"
+      | "privacy"
+      | "terms";
     slug?: string;
   }>({ type: "landing" });
 
@@ -139,6 +151,16 @@ function AppContent() {
         return;
       }
 
+      if (path.includes("/privacy") || hash.includes("#privacy")) {
+        setCurrentView({ type: "privacy" });
+        return;
+      }
+
+      if (path.includes("/terms") || hash.includes("#terms")) {
+        setCurrentView({ type: "terms" });
+        return;
+      }
+
       if (path.includes("/features/") || hash.includes("#features/")) {
         const slugMatch =
           path.match(/\/features\/([^\/]+)/) ||
@@ -181,6 +203,8 @@ function AppContent() {
         {currentView.type === "gallery" && <ImageGallery />}
         {currentView.type === "affiliate" && <AffiliateDashboard />}
         {currentView.type === "team" && <TeamPage />}
+        {currentView.type === "privacy" && <PrivacyPolicy />}
+        {currentView.type === "terms" && <TermsAndConditions />}
         {currentView.type === "landing" && <LandingPage />}
       </ThemeProvider>
     </Suspense>

@@ -254,16 +254,32 @@ function Footer({ data }: FooterProps) {
             {/* Legal Links */}
             {legalLinks.length > 0 && (
               <div className="flex gap-4 sm:gap-6 text-xs sm:text-sm flex-wrap justify-center md:justify-end">
-                {legalLinks.map((link: any, idx: number) => (
-                  <a
-                    key={idx}
-                    href={link.url}
-                    className="text-theme-neutral hover:text-theme-primary transition-all duration-200 relative group"
-                  >
-                    {link.name}
-                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 group-hover:w-full transition-all duration-200 bg-theme-primary" />
-                  </a>
-                ))}
+                {legalLinks.map((link: any, idx: number) => {
+                  const handleClick = (e: React.MouseEvent) => {
+                    e.preventDefault();
+                    if (link.name.toLowerCase().includes('privacy')) {
+                      window.history.pushState({}, '', '/privacy');
+                      window.dispatchEvent(new PopStateEvent('popstate'));
+                    } else if (link.name.toLowerCase().includes('terms')) {
+                      window.history.pushState({}, '', '/terms');
+                      window.dispatchEvent(new PopStateEvent('popstate'));
+                    } else {
+                      window.open(link.url, '_blank');
+                    }
+                  };
+                  
+                  return (
+                    <a
+                      key={idx}
+                      href={link.url}
+                      onClick={handleClick}
+                      className="text-theme-neutral hover:text-theme-primary transition-all duration-200 relative group cursor-pointer"
+                    >
+                      {link.name}
+                      <span className="absolute -bottom-1 left-0 w-0 h-0.5 group-hover:w-full transition-all duration-200 bg-theme-primary" />
+                    </a>
+                  );
+                })}
               </div>
             )}
           </div>
