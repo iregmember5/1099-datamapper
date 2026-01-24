@@ -257,12 +257,11 @@ function Footer({ data }: FooterProps) {
                 {legalLinks.map((link: any, idx: number) => {
                   const handleClick = (e: React.MouseEvent) => {
                     e.preventDefault();
-                    if (link.name.toLowerCase().includes('privacy')) {
-                      window.history.pushState({}, '', '/privacy');
-                      window.dispatchEvent(new PopStateEvent('popstate'));
-                    } else if (link.name.toLowerCase().includes('terms')) {
-                      window.history.pushState({}, '', '/terms');
-                      window.dispatchEvent(new PopStateEvent('popstate'));
+                    const linkName = link.name.toLowerCase();
+                    if (linkName.includes('privacy') || linkName.includes('policy')) {
+                      window.location.href = '/privacy';
+                    } else if (linkName.includes('terms') || linkName.includes('condition')) {
+                      window.location.href = '/terms';
                     }
                   };
                   

@@ -32,6 +32,11 @@ const TermsAndConditions = lazy(() =>
     default: m.TermsAndConditions,
   })),
 );
+const InformationPage = lazy(() =>
+  import("./components/landingpage/InformationPage").then((m) => ({
+    default: m.InformationPage,
+  })),
+);
 
 const PageLoader = () => (
   <div
@@ -71,7 +76,8 @@ function AppContent() {
       | "affiliate"
       | "team"
       | "privacy"
-      | "terms";
+      | "terms"
+      | "info";
     slug?: string;
   }>({ type: "landing" });
 
@@ -161,6 +167,11 @@ function AppContent() {
         return;
       }
 
+      if (path.includes("/info") || hash.includes("#info")) {
+        setCurrentView({ type: "info" });
+        return;
+      }
+
       if (path.includes("/features/") || hash.includes("#features/")) {
         const slugMatch =
           path.match(/\/features\/([^\/]+)/) ||
@@ -205,6 +216,7 @@ function AppContent() {
         {currentView.type === "team" && <TeamPage />}
         {currentView.type === "privacy" && <PrivacyPolicy />}
         {currentView.type === "terms" && <TermsAndConditions />}
+        {currentView.type === "info" && <InformationPage />}
         {currentView.type === "landing" && <LandingPage />}
       </ThemeProvider>
     </Suspense>

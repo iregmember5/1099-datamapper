@@ -430,7 +430,11 @@ function GlassNavbar({ data, onShowLogin }: GlassNavbarProps) {
                         href={link.url || "#"}
                         onClick={(e) => {
                           const url = link.url || "#";
-                          if (url.startsWith('#')) {
+                          if (link.title.toLowerCase().includes('demo')) {
+                            e.preventDefault();
+                            window.history.pushState({}, '', '/info');
+                            window.dispatchEvent(new PopStateEvent('popstate'));
+                          } else if (url.startsWith('#')) {
                             e.preventDefault();
                             window.location.hash = url.substring(1);
                           }
@@ -577,7 +581,11 @@ function GlassNavbar({ data, onShowLogin }: GlassNavbarProps) {
                       href={link.url || "#"}
                       onClick={(e) => {
                         const url = link.url || "#";
-                        if (url.startsWith('#')) {
+                        if (link.title.toLowerCase().includes('demo')) {
+                          e.preventDefault();
+                          window.history.pushState({}, '', '/info');
+                          window.dispatchEvent(new PopStateEvent('popstate'));
+                        } else if (url.startsWith('#')) {
                           e.preventDefault();
                           window.location.hash = url.substring(1);
                         }
