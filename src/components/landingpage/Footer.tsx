@@ -54,7 +54,7 @@ function Footer({ data }: FooterProps) {
       e.preventDefault();
       window.history.pushState({}, '', '/privacy');
       window.dispatchEvent(new PopStateEvent('popstate'));
-    } else if (linkName.includes('terms') || linkName.includes('condition')) {
+    } else if (linkName.includes('terms') || linkName.includes('condition') || linkName.includes('service')) {
       e.preventDefault();
       window.history.pushState({}, '', '/terms');
       window.dispatchEvent(new PopStateEvent('popstate'));
