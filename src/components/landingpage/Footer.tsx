@@ -52,10 +52,12 @@ function Footer({ data }: FooterProps) {
     const linkName = link.name?.toLowerCase() || '';
     if (linkName.includes('privacy') || linkName.includes('policy')) {
       e.preventDefault();
-      window.location.href = '/privacy';
+      window.history.pushState({}, '', '/privacy');
+      window.dispatchEvent(new PopStateEvent('popstate'));
     } else if (linkName.includes('terms') || linkName.includes('condition')) {
       e.preventDefault();
-      window.location.href = '/terms';
+      window.history.pushState({}, '', '/terms');
+      window.dispatchEvent(new PopStateEvent('popstate'));
     }
   };
 
