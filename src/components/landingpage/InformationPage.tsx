@@ -4,9 +4,12 @@ interface InformationPageData {
   id: number;
   title: string;
   slug: string;
-  subtitle?: string;
-  description: string;
-  last_updated: string;
+  hero?: {
+    title: string;
+    subtitle: string;
+    image: any;
+  };
+  dynamic_content?: any[];
 }
 
 const isDevelopment = import.meta.env.DEV;
@@ -84,7 +87,7 @@ export function InformationPage() {
             maxWidth: "800px",
           }}
         >
-          {data.title}
+          {data.hero?.title || data.title}
         </h1>
       </div>
 
@@ -96,7 +99,7 @@ export function InformationPage() {
           backgroundColor: "#ffffff",
         }}
       >
-        {data.subtitle && (
+        {data.hero?.subtitle && (
           <h2
             style={{
               fontSize: "1.5rem",
@@ -105,17 +108,9 @@ export function InformationPage() {
               fontWeight: "600",
             }}
           >
-            {data.subtitle}
+            {data.hero.subtitle}
           </h2>
         )}
-        <div
-          style={{
-            color: "#374151",
-            fontSize: "1.05rem",
-            lineHeight: "1.8",
-          }}
-          dangerouslySetInnerHTML={{ __html: data.description }}
-        />
       </div>
 
       <style>{`

@@ -47,9 +47,40 @@ export default function TaxAdvisorLandingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [pageData, setPageData] = useState<SalesPages | null>(null);
   const [showWebForm, setShowWebForm] = useState(false);
+  const [webformPageData, setWebformPageData] = useState<any>(null);
+  const [isLoadingWebForm, setIsLoadingWebForm] = useState(false);
 
   const [_, setFeaturesData] = useState<FeaturesPageData[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const handleOpenWebForm = async () => {
+    setIsLoadingWebForm(true);
+    try {
+      const response = await fetch(
+        "https://esign-admin.signmary.com/blogs/api/v2/webform-pages/",
+        {
+          headers: {
+            "X-Frontend-Url": "https://wp-1099.com",
+          },
+        },
+      );
+      const data = await response.json();
+      if (data.items && data.items.length > 0) {
+        const webformPage = data.items[0];
+        setWebformPageData({
+          id: webformPage.id,
+          web_form_section: {
+            form: webformPage.web_form,
+          },
+        });
+        setShowWebForm(true);
+      }
+    } catch (error) {
+      console.error("Error fetching webform:", error);
+    } finally {
+      setIsLoadingWebForm(false);
+    }
+  };
 
   useEffect(() => {
     Promise.all([
@@ -60,8 +91,33 @@ export default function TaxAdvisorLandingPage() {
       .then(([landingData, featuresData]) => {
         setPageData(landingData);
         setFeaturesData(featuresData);
-
         setLoading(false);
+
+        // Force update title and favicon after page loads
+        setTimeout(() => {
+          fetch("https://esign-admin.signmary.com/api/site-settings/")
+            .then((res) => res.json())
+            .then((settings) => {
+              if (settings.site_title) {
+                document.title = settings.site_title;
+              }
+              if (settings.favicon?.url) {
+                const faviconUrl = settings.favicon.url.startsWith("http")
+                  ? settings.favicon.url
+                  : `https://esign-admin.signmary.com${settings.favicon.url}`;
+                let link = document.querySelector(
+                  "link[rel~='icon']",
+                ) as HTMLLinkElement;
+                if (!link) {
+                  link = document.createElement("link");
+                  link.rel = "icon";
+                  document.head.appendChild(link);
+                }
+                link.href = faviconUrl;
+              }
+            })
+            .catch(console.error);
+        }, 100);
       })
       .catch(console.error);
   }, []);
@@ -69,7 +125,10 @@ export default function TaxAdvisorLandingPage() {
   if (loading) {
     return (
       <div className="geometric-bg text-white fixed inset-0 w-screen h-screen flex items-center justify-center">
-        <div className="text-2xl">Loading...</div>
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-16 h-16 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"></div>
+          <div className="text-xl font-bold text-yellow-400">Loading...</div>
+        </div>
       </div>
     );
   }
@@ -83,35 +142,60 @@ export default function TaxAdvisorLandingPage() {
           <div className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 text-white py-4 px-4 text-center font-bold shadow-2xl relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse" />
             <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 relative z-10">
-              <p className="text-sm sm:text-base font-extrabold drop-shadow-lg">
+              <p className="text-4xl font-extrabold drop-shadow-lg">
                 {pageData.header_section.title}
               </p>
               {pageData.header_section.button?.text && (
                 <button
-                  onClick={() => setShowWebForm(true)}
-                  className="bg-black hover:bg-gray-900 text-yellow-400 px-6 py-2.5 rounded-full text-xs sm:text-sm flex items-center gap-2 whitespace-nowrap font-bold shadow-xl hover:scale-105 transition-all"
+                  onClick={handleOpenWebForm}
+                  disabled={isLoadingWebForm}
+                  className="bg-black hover:bg-gray-900 text-yellow-400 px-6 py-2.5 rounded-full text-xs sm:text-sm flex items-center gap-2 whitespace-nowrap font-bold shadow-xl hover:scale-105 transition-all disabled:opacity-50"
                 >
-                  <svg
-                    className="w-4 h-4"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
-                  </svg>
-                  {pageData.header_section.button.text}
+                  {isLoadingWebForm ? (
+                    <>
+                      <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                          fill="none"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        />
+                      </svg>
+                      Loading...
+                    </>
+                  ) : (
+                    <>
+                      <svg
+                        className="w-4 h-4"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+                      </svg>
+                      {pageData.header_section.button.text}
+                    </>
+                  )}
                 </button>
               )}
             </div>
           </div>
         )}
         {pageData?.header_section?.line_one && (
-          <p className="text-xl sm:text-sm mt-2 text-center font-bold text-yellow-300">
+          <p className="text-2xl sm:text-3xl mt-2 text-center font-bold text-yellow-300">
             {pageData.header_section.line_one}
           </p>
         )}
 
         {/* Hero Section */}
-        <div className="relative overflow-hidden py-20">
+        <div className="relative overflow-hidden py-8">
           <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/20 via-orange-500/10 to-transparent"></div>
           <div className="absolute top-20 right-20 w-96 h-96 bg-yellow-500/10 rounded-full blur-3xl animate-pulse" />
           <div
@@ -119,26 +203,57 @@ export default function TaxAdvisorLandingPage() {
             style={{ animationDelay: "1s" }}
           />
 
-          <div className="container mx-auto px-4 py-12 relative max-w-7xl">
-            <div className="grid md:grid-cols-2 gap-12 items-center">
-              <div className="text-center md:text-left space-y-8">
+          <div className="container mx-auto px-4 py-4 relative max-w-7xl">
+            <div className="grid md:grid-cols-2 gap-8 items-center">
+              <div className="text-center md:text-left space-y-4">
                 {pageData?.main_hero_section?.heading && (
-                  <h1 className="text-5xl sm:text-6xl md:text-7xl font-black mb-6 leading-tight bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-400 bg-clip-text text-transparent drop-shadow-2xl">
+                  <h1 className="text-4xl sm:text-5xl md:text-6xl font-black mb-4 leading-tight bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-400 bg-clip-text text-transparent drop-shadow-2xl">
                     {pageData.main_hero_section.heading}
                   </h1>
                 )}
                 {pageData?.main_hero_section?.subheading && (
-                  <p className="text-gray-300 text-lg sm:text-xl max-w-2xl mx-auto md:mx-0 mb-8 leading-relaxed">
+                  <p className="text-gray-300 text-base sm:text-lg max-w-2xl mx-auto md:mx-0 mb-4 leading-relaxed">
                     {pageData.main_hero_section.subheading}
+                  </p>
+                )}
+                {pageData?.main_hero_section?.description && (
+                  <p className="text-gray-300 text-base sm:text-lg max-w-2xl mx-auto md:mx-0 mb-4 leading-relaxed">
+                    {pageData.main_hero_section.description}
                   </p>
                 )}
 
                 {pageData?.main_hero_section?.button?.text && (
                   <button
-                    onClick={() => setShowWebForm(true)}
-                    className="bg-gradient-to-r from-yellow-400 via-orange-500 to-yellow-400 text-black font-black py-5 px-10 rounded-full text-xl hover:scale-110 transition-all shadow-2xl hover:shadow-yellow-500/50 animate-[glow_2s_ease-in-out_infinite]"
+                    onClick={handleOpenWebForm}
+                    disabled={isLoadingWebForm}
+                    className="bg-gradient-to-r from-yellow-400 via-orange-500 to-yellow-400 text-black font-black py-5 px-10 rounded-full text-xl hover:scale-110 transition-all shadow-2xl hover:shadow-yellow-500/50 animate-[glow_2s_ease-in-out_infinite] disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    🎯 {pageData.main_hero_section.button.text}
+                    {isLoadingWebForm ? (
+                      <span className="flex items-center gap-2">
+                        <svg
+                          className="animate-spin h-5 w-5"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                            fill="none"
+                          />
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          />
+                        </svg>
+                        Loading...
+                      </span>
+                    ) : (
+                      <>🎯 {pageData.main_hero_section.button.text}</>
+                    )}
                   </button>
                 )}
               </div>
@@ -276,10 +391,13 @@ export default function TaxAdvisorLandingPage() {
                 )}
                 {pageData.secondary_cta_section.button?.text && (
                   <button
-                    onClick={() => setShowWebForm(true)}
-                    className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-black py-5 px-12 rounded-full text-xl hover:scale-105 transition-transform shadow-2xl"
+                    onClick={handleOpenWebForm}
+                    disabled={isLoadingWebForm}
+                    className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-black py-5 px-12 rounded-full text-xl hover:scale-105 transition-transform shadow-2xl disabled:opacity-50"
                   >
-                    {pageData.secondary_cta_section.button.text} →
+                    {isLoadingWebForm
+                      ? "Loading..."
+                      : `${pageData.secondary_cta_section.button.text} →`}
                   </button>
                 )}
               </div>
@@ -347,10 +465,13 @@ export default function TaxAdvisorLandingPage() {
                   )}
                   {pageData.primary_cta_section.button?.text && (
                     <button
-                      onClick={() => setShowWebForm(true)}
-                      className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-black py-5 rounded-full text-lg hover:scale-105 transition-transform shadow-xl"
+                      onClick={handleOpenWebForm}
+                      disabled={isLoadingWebForm}
+                      className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-black py-5 rounded-full text-lg hover:scale-105 transition-transform shadow-xl disabled:opacity-50"
                     >
-                      {pageData.primary_cta_section.button.text}
+                      {isLoadingWebForm
+                        ? "Loading..."
+                        : pageData.primary_cta_section.button.text}
                     </button>
                   )}
                 </div>
@@ -447,11 +568,14 @@ export default function TaxAdvisorLandingPage() {
                   {section.button?.text && (
                     <div className="text-center mt-16">
                       <button
-                        onClick={() => setShowWebForm(true)}
-                        className="group relative bg-gradient-to-r from-yellow-400 via-orange-500 to-yellow-400 text-black font-black py-5 px-12 rounded-full text-xl hover:scale-105 transition-all shadow-2xl overflow-hidden"
+                        onClick={handleOpenWebForm}
+                        disabled={isLoadingWebForm}
+                        className="group relative bg-gradient-to-r from-yellow-400 via-orange-500 to-yellow-400 text-black font-black py-5 px-12 rounded-full text-xl hover:scale-105 transition-all shadow-2xl overflow-hidden disabled:opacity-50"
                       >
                         <span className="relative z-10">
-                          {section.button.text} →
+                          {isLoadingWebForm
+                            ? "Loading..."
+                            : `${section.button.text} →`}
                         </span>
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
                       </button>
@@ -477,10 +601,11 @@ export default function TaxAdvisorLandingPage() {
               {cta.description && <p className="mb-4">{cta.description}</p>}
               {cta.button?.text && (
                 <button
-                  onClick={() => setShowWebForm(true)}
-                  className="bg-gradient-to-r from-yellow-500 to-orange-500 text-black font-bold py-4 px-8 rounded-full text-lg hover:scale-105 transition-transform"
+                  onClick={handleOpenWebForm}
+                  disabled={isLoadingWebForm}
+                  className="bg-gradient-to-r from-yellow-500 to-orange-500 text-black font-bold py-4 px-8 rounded-full text-lg hover:scale-105 transition-transform disabled:opacity-50"
                 >
-                  🎯 {cta.button.text}
+                  {isLoadingWebForm ? "Loading..." : `🎯 ${cta.button.text}`}
                 </button>
               )}
             </div>
@@ -499,13 +624,16 @@ export default function TaxAdvisorLandingPage() {
                 {pageData.web_form_section.description}
               </p>
             )}
-            <div className="max-w-2xl mx-auto">
-              <p className="text-center text-gray-400">
-                Form ID:{" "}
-                {typeof pageData.web_form_section.form === "object"
-                  ? pageData.web_form_section.form.id
-                  : pageData.web_form_section.form}
-              </p>
+            <div className="max-w-2xl mx-auto text-center">
+              <button
+                onClick={handleOpenWebForm}
+                disabled={isLoadingWebForm}
+                className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-black py-5 px-12 rounded-full text-xl hover:scale-105 transition-transform shadow-2xl disabled:opacity-50"
+              >
+                {isLoadingWebForm
+                  ? "Loading..."
+                  : pageData.web_form_section.form.form_title || "Apply Now"}
+              </button>
             </div>
           </div>
         )}
@@ -573,11 +701,12 @@ export default function TaxAdvisorLandingPage() {
           )}
       </div>
 
-      {pageData?.web_form_section && (
+      {webformPageData?.web_form_section && (
         <WebForm
           isOpen={showWebForm}
           onClose={() => setShowWebForm(false)}
-          data={pageData.web_form_section}
+          data={webformPageData.web_form_section}
+          webformPageId={webformPageData.id}
         />
       )}
     </>
