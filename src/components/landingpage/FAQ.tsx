@@ -90,6 +90,7 @@ const FAQ: React.FC<FAQProps> = ({ data }) => {
 
   return (
     <section
+      id="faq"
       className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8"
       style={{
         backgroundColor: backgroundColor,
