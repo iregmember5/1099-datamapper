@@ -179,7 +179,7 @@ function AppContent() {
           if (faqSection) {
             faqSection.scrollIntoView({ behavior: 'smooth' });
           }
-        }, 100);
+        }, 500);
         return;
       }
 
