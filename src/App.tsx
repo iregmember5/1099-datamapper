@@ -157,18 +157,33 @@ function AppContent() {
         return;
       }
 
-      if (path.includes("/privacy") || hash.includes("#privacy")) {
+      if (path.includes("/privacy-policy") || path.includes("/privacy") || hash.includes("#privacy")) {
         setCurrentView({ type: "privacy" });
         return;
       }
 
-      if (path.includes("/terms") || hash.includes("#terms")) {
+      if (path.includes("/terms-of-service") || path.includes("/terms") || hash.includes("#terms")) {
         setCurrentView({ type: "terms" });
         return;
       }
 
       if (path.includes("/info") || hash.includes("#info")) {
         setCurrentView({ type: "info" });
+        return;
+      }
+
+      if (path.includes("/faq") || hash.includes("#faq")) {
+        // Navigate to landing page and scroll to FAQ section
+        if (path.includes("/faq")) {
+          window.history.replaceState({}, '', '/#faq');
+        }
+        setCurrentView({ type: "landing" });
+        setTimeout(() => {
+          const faqSection = document.getElementById('faq');
+          if (faqSection) {
+            faqSection.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 100);
         return;
       }
 
