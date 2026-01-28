@@ -186,12 +186,15 @@ function AppContent() {
         hash.includes("#faqs")
       ) {
         setCurrentView({ type: "landing" });
-        setTimeout(() => {
+        const scrollToFaq = () => {
           const faqSection = document.getElementById("faqs");
           if (faqSection) {
-            faqSection.scrollIntoView({ behavior: "smooth" });
+            faqSection.scrollIntoView({ behavior: "smooth", block: "start" });
+          } else {
+            setTimeout(scrollToFaq, 100);
           }
-        }, 500);
+        };
+        setTimeout(scrollToFaq, 300);
         return;
       }
 
