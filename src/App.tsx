@@ -157,12 +157,20 @@ function AppContent() {
         return;
       }
 
-      if (path.includes("/privacy-policy") || path.includes("/privacy") || hash.includes("#privacy")) {
+      if (
+        path.includes("/privacy-policy") ||
+        path.includes("/privacy") ||
+        hash.includes("#privacy")
+      ) {
         setCurrentView({ type: "privacy" });
         return;
       }
 
-      if (path.includes("/terms-of-service") || path.includes("/terms") || hash.includes("#terms")) {
+      if (
+        path.includes("/terms-of-service") ||
+        path.includes("/terms") ||
+        hash.includes("#terms")
+      ) {
         setCurrentView({ type: "terms" });
         return;
       }
@@ -172,12 +180,16 @@ function AppContent() {
         return;
       }
 
-      if (path === "/faq" || path.includes("/faq") || hash.includes("#faq")) {
+      if (
+        path === "/faqs" ||
+        path.includes("/faqs") ||
+        hash.includes("#faqs")
+      ) {
         setCurrentView({ type: "landing" });
         setTimeout(() => {
-          const faqSection = document.getElementById('faq');
+          const faqSection = document.getElementById("faqs");
           if (faqSection) {
-            faqSection.scrollIntoView({ behavior: 'smooth' });
+            faqSection.scrollIntoView({ behavior: "smooth" });
           }
         }, 500);
         return;

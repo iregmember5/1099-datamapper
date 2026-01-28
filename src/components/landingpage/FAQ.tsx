@@ -52,8 +52,8 @@ const FAQ: React.FC<FAQProps> = ({ data }) => {
       faqItems
         .map((item) => item.category)
         .filter((category): category is string =>
-          Boolean(category && category.trim() !== "")
-        )
+          Boolean(category && category.trim() !== ""),
+        ),
     ),
   ];
 
@@ -90,7 +90,7 @@ const FAQ: React.FC<FAQProps> = ({ data }) => {
 
   return (
     <section
-      id="faq"
+      id="faqs"
       className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8"
       style={{
         backgroundColor: backgroundColor,
@@ -100,7 +100,10 @@ const FAQ: React.FC<FAQProps> = ({ data }) => {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8 sm:mb-12">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4" style={{ color: textColor }}>
+          <h2
+            className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4"
+            style={{ color: textColor }}
+          >
             {heading}
           </h2>
           {introduction && (
@@ -186,7 +189,9 @@ const FAQ: React.FC<FAQProps> = ({ data }) => {
               className="rounded-2xl transition-all duration-200 border-2"
               style={{
                 backgroundColor: openItems.has(faq.id) ? "#ffffff" : "#f8f9fa",
-                borderColor: openItems.has(faq.id) ? primaryColor : `${neutralColor}40`,
+                borderColor: openItems.has(faq.id)
+                  ? primaryColor
+                  : `${neutralColor}40`,
               }}
             >
               <button
