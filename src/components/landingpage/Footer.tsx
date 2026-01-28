@@ -52,12 +52,10 @@ function Footer({ data }: FooterProps) {
     const linkName = link.name?.toLowerCase() || '';
     if (linkName.includes('privacy') || linkName.includes('policy')) {
       e.preventDefault();
-      window.history.pushState({}, '', '/privacy');
-      window.dispatchEvent(new PopStateEvent('popstate'));
+      window.location.href = 'https://1099datamapper.com/privacy-policy';
     } else if (linkName.includes('terms') || linkName.includes('condition') || linkName.includes('service')) {
       e.preventDefault();
-      window.history.pushState({}, '', '/terms');
-      window.dispatchEvent(new PopStateEvent('popstate'));
+      window.location.href = 'https://1099datamapper.com/terms-of-service';
     }
   };
 
