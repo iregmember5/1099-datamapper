@@ -172,11 +172,7 @@ function AppContent() {
         return;
       }
 
-      if (path.includes("/faq") || hash.includes("#faq")) {
-        // Navigate to landing page and scroll to FAQ section
-        if (path.includes("/faq")) {
-          window.history.replaceState({}, '', '/#faq');
-        }
+      if (path === "/faq" || path.includes("/faq") || hash.includes("#faq")) {
         setCurrentView({ type: "landing" });
         setTimeout(() => {
           const faqSection = document.getElementById('faq');
